@@ -61,15 +61,18 @@ function concert_this(arg){
 
 function spotify_this(arg){
     var spotify = new Spotify(keys.spotify);
-    spotify.search({ type: 'track', query: arg, limit: 5 }, function (err, data) {
+    if(!arg){
+        arg="The Sign"; // Default value
+    }
+    spotify.search({ type: 'track', query: arg}, function (err, data) {
         if(err){
             return console.log("An error happens " + err);
         }
         var spotifyArr = data.tracks.items;
-        // console.log(spotifyArr);
 
+        // Read each result in the query returned
         for (var i = 0; i < spotifyArr.length; i++ ){
-            console.log(` <<<<< Here's your choice : >>>>>` + "\n");
+            console.log(` <<<<< Here's your result # ${i + 1} : >>>>>` + "\n");
             console.log(` Artist: ${data.tracks.items[i].album.artists[0].name}`);
             console.log(` Album: ${data.tracks.items[i].album.name}`);
             console.log(` Song: ${data.tracks.items[i].name}`);
