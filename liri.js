@@ -4,6 +4,8 @@ var keys = require("./keys.js");
 var inquirer = require("inquirer");
 var Spotify = require("node-spotify-api");
 var request = require("request");
+var moment = require("moment");
+var axios = require("axios");
 var qryURL = "";
 
 // This prompt ask for an user option
@@ -25,15 +27,19 @@ inquirer
         case 'Concert: ':
             concert_this(resp.usrSerch);
             break;
+
         case 'Spotify this song: ':
             spotify_this(resp.usrSerch);
             break;
+
         case 'Movie-this: ':
             movie_this(resp.usrSerch);
             break;
+
         case 'Do what it says: ':
-            console.log(` Your option was: ${resp.usrOpt}`);
+            doIt(resp.usrOpt, resp.usrSerch);
             break;
+
         case 'default':
             console.log(` No selection was made `);
             break;
@@ -41,34 +47,43 @@ inquirer
 });
 
 // Execution function in order to get info desired
-
 function concert_this(arg){
     qryURL = "https://rest.bandsintown.com/artist/" + arg + "/events?app_id=codingbootcamp";
-    console.log(qryURL);
-}
+        axios.get(qryURL).then( function(response) {
+            console.log(response);
+            console.log(` Name: ${response.data[0].venue.name} \r\n ` );
+            console.log(` Location: ${response.data[0].venue.city} \r\n `);
+            console.log(` Date: ` + moment(response.data[0].datetime).format("DD/MM/YYYY") + "\r\n");
+    }).catch((error) => {
+        console.log(error, 'Promise error');
+    })
+};
 
 function spotify_this(arg){
     var spotify = new Spotify(keys.spotify);
-    console.log(keys.spotify);
-    spotify.search({type: 'track', query: arg}, function(err, data){
+    spotify.search({ type: 'track', query: arg, limit: 5 }, function (err, data) {
         if(err){
             return console.log("An error happens " + err);
         }
-        var myTrack = data.tracks.items[5];
-        var mySong = "Song title: " + arg + "\r\n" + 
-                     "Artist: " + myTrack.artist[0].name + "\r\n" +
-                     "Album: " + myTrack.album + "\r\n" +
-                     "Link: " + myTrack.preview.url + "\r\n";
-        console.log(mySong);
-    });
-}
+        var spotifyArr = data.tracks.items;
+        // console.log(spotifyArr);
 
+        for (var i = 0; i < spotifyArr.length; i++ ){
+            console.log(` <<<<< Here's your choice : >>>>>` + "\n");
+            console.log(` Artist: ${data.tracks.items[i].album.artists[0].name}`);
+            console.log(` Album: ${data.tracks.items[i].album.name}`);
+            console.log(` Song: ${data.tracks.items[i].name}`);
+            console.log(` Spotify Link: ${data.tracks.items[i].external_urls.spotify}` + "\n");
+        }
+    });
+};
+
+// Gets movie information according to user's input
 function movie_this(arg){
     qryURL = "http://www.omdbapi.com/?t=" + arg + "&apikey=trilogy&plot=short&tomatoes=true";
     request(qryURL, function(error, response, body){
         if(!error && response.statusCode == 200){
             var jsonData = JSON.parse(body);
-            // console.log(jsonData);
             console.log(` *--------- MOVIE'S INFORMATION ---------* ` + "\n");
             console.log(` Title:  ${jsonData.Title} ` + "\n");
             console.log(` Year : ${jsonData.Year} ` + "\n");
@@ -84,3 +99,13 @@ function movie_this(arg){
         }
     })
 }
+
+// Final function to handle other activities
+function doIt(arg1, arg2){
+    fs.readFile("random.txt", "utf8", function(error, data){
+        let fileArr = data.split(",");
+
+
+
+    });
+};
