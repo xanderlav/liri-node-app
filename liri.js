@@ -71,14 +71,18 @@ function spotify_this(arg){
             return console.log("An error happens " + err);
         }
         var spotifyArr = data.tracks.items;
-
-        // Read each result in the query returned & show them 
-        for (var i = 0; i < spotifyArr.length; i++ ){
-            console.log(` <<<<< Here's your result # ${i + 1} : >>>>>` + "\n");
-            console.log(` Artist: ${data.tracks.items[i].album.artists[0].name}`);
-            console.log(` Album: ${data.tracks.items[i].album.name}`);
-            console.log(` Song: ${data.tracks.items[i].name}`);
-            console.log(` Spotify Link: ${data.tracks.items[i].external_urls.spotify}` + "\n");
+        // If founds something shows it, otherwise shows an error message
+        if(spotifyArr.length> 0){
+            // Read each result in the query returned & show them 
+            for (var i = 0; i < spotifyArr.length; i++ ){
+                console.log(` <<<<< Here's your result # ${i + 1} : >>>>>` + "\n");
+                console.log(` Artist: ${data.tracks.items[i].album.artists[0].name}`);
+                console.log(` Album: ${data.tracks.items[i].album.name}`);
+                console.log(` Song: ${data.tracks.items[i].name}`);
+                console.log(` Spotify Link: ${data.tracks.items[i].external_urls.spotify}` + "\n");
+            }
+        }else{
+            console.log(` No information found related to ${arg}, sorry but you could try another song`);
         }
     });
 };
