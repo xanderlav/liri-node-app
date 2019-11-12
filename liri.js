@@ -6,6 +6,7 @@ var Spotify = require("node-spotify-api");
 var request = require("request");
 var moment = require("moment");
 var axios = require("axios");
+var fs = require("fs");
 var qryURL = "";
 
 // This prompt ask for an user option
@@ -36,8 +37,8 @@ inquirer
             movie_this(resp.usrSerch);
             break;
 
-        case 'Do what it says: ':
-            doIt(resp.usrOpt, resp.usrSerch);
+        case 'Do What it says: ':
+            doIt();
             break;
 
         case 'default':
@@ -61,16 +62,17 @@ function concert_this(arg){
 
 function spotify_this(arg){
     var spotify = new Spotify(keys.spotify);
-    if(!arg){
-        arg="The Sign"; // Default value
-    }
+    // Default value
+    if(!arg) { arg = "The Sign"; } 
+    
+    // Execute API according to arguments sent
     spotify.search({ type: 'track', query: arg}, function (err, data) {
         if(err){
             return console.log("An error happens " + err);
         }
         var spotifyArr = data.tracks.items;
 
-        // Read each result in the query returned
+        // Read each result in the query returned & show them 
         for (var i = 0; i < spotifyArr.length; i++ ){
             console.log(` <<<<< Here's your result # ${i + 1} : >>>>>` + "\n");
             console.log(` Artist: ${data.tracks.items[i].album.artists[0].name}`);
@@ -83,11 +85,16 @@ function spotify_this(arg){
 
 // Gets movie information according to user's input
 function movie_this(arg){
+    // Default value
+    if(!arg){ arg = "Mr. Nobody"; }
+
+    // Executes OMDb API according to argument sent
     qryURL = "http://www.omdbapi.com/?t=" + arg + "&apikey=trilogy&plot=short&tomatoes=true";
     request(qryURL, function(error, response, body){
         if(!error && response.statusCode == 200){
             var jsonData = JSON.parse(body);
-            console.log(` *--------- MOVIE'S INFORMATION ---------* ` + "\n");
+            // Gets movie's info and show it 
+            console.log("\n" + ` *-*-*-*-*- MOVIE'S INFORMATION -*-*-*-*-* ` + "\n");
             console.log(` Title:  ${jsonData.Title} ` + "\n");
             console.log(` Year : ${jsonData.Year} ` + "\n");
             console.log(` IMBD rating : ${jsonData.imdbRating} ` + "\n");
@@ -96,7 +103,7 @@ function movie_this(arg){
             console.log(` Language : ${jsonData.Language}` + "\n");
             console.log(` Plot : ${jsonData.Plot}` + "\n");
             console.log(` Cast : ${jsonData.Actors}` + "\n");
-            console.log(` *---------------------------------------* ` + "\n");
+            console.log(` *-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-*-* ` + "\n");
         }else{
             console.log("Error : " + error.message);
         }
@@ -104,11 +111,12 @@ function movie_this(arg){
 }
 
 // Final function to handle other activities
-function doIt(arg1, arg2){
+function doIt(){
+    // Read text file and executes activity
     fs.readFile("random.txt", "utf8", function(error, data){
         let fileArr = data.split(",");
-
-
-
+        if(fileArr[0] === "spotify-this-song"){
+            spotify_this(fileArr[1]);
+        }
     });
 };
