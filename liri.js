@@ -49,9 +49,10 @@ inquirer
 
 // Execution function in order to get info desired
 function concert_this(arg){
-    qryURL = "https://rest.bandsintown.com/artist/" + arg + "/events?app_id=codingbootcamp";
+    qryURL = "https://rest.bandsintown.com/artists/" + arg + "/events?app_id=codingbootcamp";
         axios.get(qryURL).then( function(response) {
-            console.log(response);
+            // console.log(response);
+            console.log(`<<<<<<< * Results for your search ${arg} * >>>>>>>` + "\n");
             console.log(` Name: ${response.data[0].venue.name} \r\n ` );
             console.log(` Location: ${response.data[0].venue.city} \r\n `);
             console.log(` Date: ` + moment(response.data[0].datetime).format("DD/MM/YYYY") + "\r\n");
