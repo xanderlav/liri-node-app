@@ -54,7 +54,7 @@ function concert_this(arg){
             var concArr = response.data;
             // Show each result get 
             for(var j=0; j < concArr.length; j++){          
-            console.log("\n" + `<<<<<<< * Results for your search ${arg} * >>>>>>>` + "\n");
+            console.log("\n" + `<<<<<<< * Result #${j} for your search ${arg} * >>>>>>>` + "\n");
             console.log(` Name: ${response.data[j].venue.name} \r\n ` );
             console.log(` Location: ${response.data[j].venue.city} \r\n `);
             console.log(` Date: ` + moment(response.data[j].datetime).format("DD/MM/YYYY") + "\r\n");
